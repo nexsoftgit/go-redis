@@ -5,11 +5,11 @@ import (
 	"testing"
 
 	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	mg "github.com/onsi/gomega"
 )
 
 func TestGinkgoSuite(t *testing.T) {
-	RegisterFailHandler(Fail)
+	mg.RegisterFailHandler(Fail)
 	RunSpecs(t, "hashtag")
 }
 
@@ -26,7 +26,7 @@ var _ = Describe("CRC16", func() {
 		}
 
 		for _, test := range tests {
-			Expect(crc16sum(test.s)).To(Equal(test.n), "for %s", test.s)
+			mg.Expect(crc16sum(test.s)).To(mg.Equal(test.n), "for %s", test.s)
 		}
 	})
 
@@ -51,7 +51,7 @@ var _ = Describe("HashSlot", func() {
 		rand.Seed(100)
 
 		for _, test := range tests {
-			Expect(Slot(test.key)).To(Equal(test.slot), "for %s", test.key)
+			mg.Expect(Slot(test.key)).To(mg.Equal(test.slot), "for %s", test.key)
 		}
 	})
 
@@ -67,7 +67,7 @@ var _ = Describe("HashSlot", func() {
 		}
 
 		for _, test := range tests {
-			Expect(Slot(test.one)).To(Equal(Slot(test.two)), "for %s <-> %s", test.one, test.two)
+			mg.Expect(Slot(test.one)).To(mg.Equal(Slot(test.two)), "for %s <-> %s", test.one, test.two)
 		}
 	})
 
