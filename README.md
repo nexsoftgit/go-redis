@@ -1,6 +1,5 @@
 # Redis client for Golang
 
-[![Build Status](https://travis-ci.org/bukalapak/redis.png?branch=master)](https://travis-ci.org/bukalapak/redis)
 
 
 
@@ -22,8 +21,6 @@ Supports:
 - [Rate limiting](https://github.com/bukalapak/redis_rate).
 - [Distributed Locks](https://github.com/bsm/redis-lock).
 
-API docs: https://godoc.org/github.com/bukalapak/redis.
-Examples: https://godoc.org/github.com/bukalapak/redis#pkg-examples.
 
 ## Installation
 
