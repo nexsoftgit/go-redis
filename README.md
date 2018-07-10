@@ -81,7 +81,7 @@ func ExampleClient() {
 
 ## Howto
 
-Please go through [examples](https://godoc.org/github.com/bukalapak/redis#pkg-examples) to get an idea how to use this package.
+Please go through [examples](example_test.go) to get an idea how to use this package.
 
 ## Look and feel
 

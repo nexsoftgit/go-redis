@@ -18,3 +18,6 @@ testdata/redis:
 testdata/redis/src/redis-server: testdata/redis
 	sed -i.bak 's/libjemalloc.a/libjemalloc.a -lrt/g' $</src/Makefile
 	cd $< && make all
+
+test:
+	go test ./...
