@@ -177,7 +177,14 @@ func (c *baseClient) defaultProcess(cmd Cmder) error {
 }
 
 func (c *baseClient) processWithBreaker(cmd Cmder) error {
-	err := hystrix.Do("redis_client", func() error {
+	nameSetting := "redisClient"
+
+	cbCommands := hystrix.GetCircuitSettings()
+	if _, exists := cbCommands[nameSetting]; !exists {
+		hystrix.ConfigureCommand(nameSetting, *c.opt.CircuitBreaker)
+	}
+
+	err := hystrix.Do(nameSetting, func() error {
 		return c.defaultProcess(cmd)
 	}, nil)
 
