@@ -11,10 +11,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/afex/hystrix-go/hystrix"
 	"github.com/bukalapak/redis/internal/pool"
 )
 
 type Options struct {
+	// Compose hystrix config Circuit Breaker
+	*hystrix.CommandConfig
+
 	// The network type, either tcp or unix.
 	// Default is tcp.
 	Network string
@@ -77,6 +81,9 @@ type Options struct {
 
 	// TLS Config to use. When set TLS will be negotiated.
 	TLSConfig *tls.Config
+
+	// Circuit breaker treshold
+
 }
 
 func (opt *Options) init() {

@@ -18,7 +18,7 @@ Supports:
 - [Ring](https://godoc.org/github.com/bukalapak/redis#NewRing).
 - [Instrumentation](https://godoc.org/github.com/bukalapak/redis#ex-package--Instrumentation).
 - [Cache friendly](https://github.com/go-redis/cache).
-- [Rate limiting](https://github.com/bukalapak/redis_rate).
+- [Rate limiting](https://github.com/go-redis/redis_rate).
 - [Distributed Locks](https://github.com/bsm/redis-lock).
 
 
