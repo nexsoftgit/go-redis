@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/afex/hystrix-go/hystrix"
 	"github.com/bukalapak/redis/internal"
 	"github.com/bukalapak/redis/internal/pool"
 	"github.com/bukalapak/redis/internal/proto"
@@ -35,7 +36,12 @@ type baseClient struct {
 }
 
 func (c *baseClient) init() {
-	c.process = c.defaultProcess
+	if c.opt.CircuitBreaker == nil {
+		c.process = c.defaultProcess
+	} else {
+		c.process = c.processWithBreaker
+	}
+
 	c.processPipeline = c.defaultProcessPipeline
 	c.processTxPipeline = c.defaultProcessTxPipeline
 }
@@ -168,6 +174,14 @@ func (c *baseClient) defaultProcess(cmd Cmder) error {
 	}
 
 	return cmd.Err()
+}
+
+func (c *baseClient) processWithBreaker(cmd Cmder) error {
+	err := hystrix.Do("redis_client", func() error {
+		return c.defaultProcess(cmd)
+	}, nil)
+
+	return err
 }
 
 func (c *baseClient) retryBackoff(attempt int) time.Duration {

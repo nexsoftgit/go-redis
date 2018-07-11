@@ -17,7 +17,7 @@ import (
 
 type Options struct {
 	// Compose hystrix config Circuit Breaker
-	*hystrix.CommandConfig
+	CircuitBreaker *hystrix.CommandConfig
 
 	// The network type, either tcp or unix.
 	// Default is tcp.
@@ -81,9 +81,6 @@ type Options struct {
 
 	// TLS Config to use. When set TLS will be negotiated.
 	TLSConfig *tls.Config
-
-	// Circuit breaker treshold
-
 }
 
 func (opt *Options) init() {
