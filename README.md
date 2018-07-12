@@ -40,42 +40,59 @@ import "github.com/bukalapak/redis"
 
 ```go
 func ExampleNewClient() {
-	client := redis.NewClient(&redis.Options{
+	opts := &redis.Options{
+		CircuitBreaker: optCB,
 		Addr:     "localhost:6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
-	})
+	}
+
+	client := redis.NewClient(opts
+
+	pong, err := client.Ping().Result()
+	fmt.Println(pong, err)
+	// Output: PONG <nil>
+}
+```
+### With Circuit Breaker
+```go
+func WithCircuitBreaker() {
+	
+	optCB := &hystrix.CommandConfig{
+		Timeout:                10000,
+		RequestVolumeThreshold: 2,
+		SleepWindow:            500,
+		ErrorPercentThreshold:  5,
+	}
+	// Please, read more about command config in hystrix-go doc.
+	//https://godoc.org/github.com/afex/hystrix-go/hystrix#pkg-variables)
+
+	opts := &redis.Options{
+		CircuitBreaker: optCB,
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	}
+
+	client := redis.NewClient(opts)
 
 	pong, err := client.Ping().Result()
 	fmt.Println(pong, err)
 	// Output: PONG <nil>
 }
 
-func ExampleClient() {
-	err := client.Set("key", "value", 0).Err()
-	if err != nil {
-		panic(err)
-	}
-
-	val, err := client.Get("key").Result()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("key", val)
-
-	val2, err := client.Get("key2").Result()
-	if err == redis.Nil {
-		fmt.Println("key2 does not exist")
-	} else if err != nil {
-		panic(err)
-	} else {
-		fmt.Println("key2", val2)
-	}
-	// Output: key value
-	// key2 does not exist
-}
 ```
+Any changes in breaker state will be generate metrics for monitoring. Below is a list of the metrics.
+```
+Name: "circuit_breaker_open"
+Help: "A total number of circuit breaker state open. This happens due to the circuit being measured as unhealthy."
+	
+Name: "circuit_breaker_max_concurrency"
+Hel: "A total number of client executed at the same time and exceeded max concurrency."
 
+Name: "circuit_breaker_timeout"
+Help: "A total number of request exceeded timeout duration"
+```
 ## Howto
 
 Please go through [examples](example_test.go) to get an idea how to use this package.
