@@ -394,7 +394,6 @@ var _ = FDescribe("CircuitBreaker", func() {
 			// Client ping must be failed because circuit breaker on state open
 			err = client.Ping().Err()
 			Expect(err).To(MatchError(hystrix.ErrCircuitOpen))
-			redis.Cir
 		})
 
 	}
