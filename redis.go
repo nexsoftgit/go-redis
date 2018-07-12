@@ -200,11 +200,8 @@ func (c *baseClient) processWithBreaker(cmd Cmder) error {
 			break
 		}
 	}
-
-	fmt.Println("")
-	fmt.Println(err, "circuit breaker")
-
-	return err
+	cmd.setErr(err)
+	return cmd.Err()
 }
 
 func (c *baseClient) retryBackoff(attempt int) time.Duration {

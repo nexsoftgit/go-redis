@@ -2,10 +2,10 @@ package redis_test
 
 import (
 	"bytes"
-	"fmt"
 	"net"
 	"time"
 
+	"github.com/afex/hystrix-go/hystrix"
 	"github.com/bukalapak/redis"
 
 	. "github.com/onsi/ginkgo"
@@ -379,15 +379,22 @@ var _ = FDescribe("CircuitBreaker", func() {
 
 	testTimeout := func() {
 		It("Open circuit breaker", func() {
-			for i := 0; i < 3; i++ {
-				err := client.Ping().Err()
-				Expect(err).To(HaveOccurred())
-			}
 
-			opt.ReadTimeout = 10 * time.Second
-			opt.WriteTimeout = 10 * time.Second
+			//stop redis server
+			Expect(redisMain.Close()).NotTo(HaveOccurred())
+
+			// err because exceeded cb treshold (1)
 			err := client.Ping().Err()
-			fmt.Println(err)
+			Expect(err).To(HaveOccurred())
+
+			//start redis server
+			redisMain, err = startRedis(redisPort)
+			Expect(err).NotTo(HaveOccurred())
+
+			// Client ping must be failed because circuit breaker on state open
+			err = client.Ping().Err()
+			Expect(err).To(MatchError(hystrix.ErrCircuitOpen))
+			redis.Cir
 		})
 
 	}
