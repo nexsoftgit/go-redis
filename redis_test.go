@@ -2,6 +2,7 @@ package redis_test
 
 import (
 	"bytes"
+	"fmt"
 	"net"
 	"time"
 
@@ -366,4 +367,41 @@ var _ = Describe("Client OnConnect", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(name).To(Equal("on_connect"))
 	})
+})
+
+var _ = FDescribe("CircuitBreaker", func() {
+	var opt *redis.Options
+	var client *redis.Client
+
+	AfterEach(func() {
+		Expect(client.Close()).NotTo(HaveOccurred())
+	})
+
+	testTimeout := func() {
+		It("Open circuit breaker", func() {
+			for i := 0; i < 3; i++ {
+				err := client.Ping().Err()
+				Expect(err).To(HaveOccurred())
+			}
+
+			opt.ReadTimeout = 10 * time.Second
+			opt.WriteTimeout = 10 * time.Second
+			err := client.Ping().Err()
+			fmt.Println(err)
+		})
+
+	}
+
+	Context("circuit breaker", func() {
+		BeforeEach(func() {
+			opt = redisOptionsBreaker()
+			opt.CircuitBreaker.RequestVolumeThreshold = 1
+			opt.ReadTimeout = time.Nanosecond
+			opt.WriteTimeout = time.Nanosecond
+			client = redis.NewClient(opt)
+		})
+
+		testTimeout()
+	})
+
 })

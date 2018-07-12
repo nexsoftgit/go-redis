@@ -36,11 +36,11 @@ type baseClient struct {
 }
 
 func (c *baseClient) init() {
-	if c.opt.CircuitBreaker == nil {
-		c.process = c.defaultProcess
-	} else {
-		c.process = c.processWithBreaker
-	}
+	c.process = c.defaultProcess
+	// if c.opt.CircuitBreaker == nil {
+	// } else {
+	// 	c.process = c.processWithBreaker
+	// }
 
 	c.processPipeline = c.defaultProcessPipeline
 	c.processTxPipeline = c.defaultProcessTxPipeline
@@ -178,7 +178,6 @@ func (c *baseClient) defaultProcess(cmd Cmder) error {
 
 func (c *baseClient) processWithBreaker(cmd Cmder) error {
 	nameSetting := "redisClient"
-
 	cbCommands := hystrix.GetCircuitSettings()
 	if _, exists := cbCommands[nameSetting]; !exists {
 		hystrix.ConfigureCommand(nameSetting, *c.opt.CircuitBreaker)

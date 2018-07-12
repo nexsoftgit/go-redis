@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/afex/hystrix-go/hystrix"
 	"github.com/bukalapak/redis"
 
 	. "github.com/onsi/ginkgo"
@@ -108,6 +109,26 @@ func TestGinkgoSuite(t *testing.T) {
 
 func redisOptions() *redis.Options {
 	return &redis.Options{
+		Addr:               redisAddr,
+		DB:                 15,
+		DialTimeout:        10 * time.Second,
+		ReadTimeout:        30 * time.Second,
+		WriteTimeout:       30 * time.Second,
+		PoolSize:           10,
+		PoolTimeout:        30 * time.Second,
+		IdleTimeout:        500 * time.Millisecond,
+		IdleCheckFrequency: 500 * time.Millisecond,
+	}
+}
+
+func redisOptionsBreaker() *redis.Options {
+	return &redis.Options{
+		CircuitBreaker: &hystrix.CommandConfig{
+			Timeout:                10000,
+			RequestVolumeThreshold: 2,
+			SleepWindow:            500,
+			ErrorPercentThreshold:  5,
+		},
 		Addr:               redisAddr,
 		DB:                 15,
 		DialTimeout:        10 * time.Second,
