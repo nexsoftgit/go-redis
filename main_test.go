@@ -32,7 +32,7 @@ const (
 )
 
 const (
-	sentinelName       = "mymaster"
+	sentinelName       = "mysyfu"
 	sentinelMasterPort = "8123"
 	sentinelSlave1Port = "8124"
 	sentinelSlave2Port = "8125"
