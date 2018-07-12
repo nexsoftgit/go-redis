@@ -36,11 +36,11 @@ type baseClient struct {
 }
 
 func (c *baseClient) init() {
-	c.process = c.defaultProcess
-	// if c.opt.CircuitBreaker == nil {
-	// } else {
-	// 	c.process = c.processWithBreaker
-	// }
+	if c.opt.CircuitBreaker == nil {
+		c.process = c.defaultProcess
+	} else {
+		c.process = c.processWithBreaker
+	}
 
 	c.processPipeline = c.defaultProcessPipeline
 	c.processTxPipeline = c.defaultProcessTxPipeline
@@ -186,6 +186,23 @@ func (c *baseClient) processWithBreaker(cmd Cmder) error {
 	err := hystrix.Do(nameSetting, func() error {
 		return c.defaultProcess(cmd)
 	}, nil)
+
+	if err != nil {
+		switch err {
+		case hystrix.ErrCircuitOpen:
+			circuitBreakerOpen.WithLabelValues(cmd.String()).Inc()
+			break
+		case hystrix.ErrMaxConcurrency:
+			circuitBreakerMaxConcurrency.WithLabelValues(cmd.String()).Inc()
+			break
+		case hystrix.ErrTimeout:
+			circuitBreakerTimeout.WithLabelValues(cmd.String()).Inc()
+			break
+		}
+	}
+
+	fmt.Println("")
+	fmt.Println(err, "circuit breaker")
 
 	return err
 }
