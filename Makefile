@@ -21,7 +21,3 @@ testdata/redis/src/redis-server: testdata/redis
 
 test:
 	go test ./...
-
-test-spesific:
-	echo "please delete after you fix cb test"
-	go test -ginkgo.focus=CircuitBreaker -ginkgo.progress -ginkgo.failFast
