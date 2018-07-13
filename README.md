@@ -83,15 +83,18 @@ func WithCircuitBreaker() {
 
 ```
 Any changes in breaker state will generate metrics for monitoring. Below is a list of the metrics.
-```
-Name: "circuit_breaker_open"
-Help: "A total number of circuit breaker state open. This happens due to the circuit being measured as unhealthy."
-	
-Name: "circuit_breaker_max_concurrency"
-Hel: "A total number of client executed at the same time and exceeded max concurrency."
+``` yaml
+Name: "circuit_breaker"
+Help: "A total number of redis client make a request to redis server with circuit breaker state."
+Labels: 
+	- command : "redis command" 
+	- service : "service name"
+	- status : "fail/ok"
+	- state: 
+		- "circuit breaker open": A total number of circuit breaker state open. This happens due to the circuit being measured as unhealthy.
+		- "max_concurency": A total number of client executed at the same time and exceeded max concurrency.
+		- "timeout": A total number of request exceeded timeout duration
 
-Name: "circuit_breaker_timeout"
-Help: "A total number of request exceeded timeout duration"
 ```
 ## Howto
 
