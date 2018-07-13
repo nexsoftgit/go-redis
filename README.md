@@ -82,7 +82,7 @@ func WithCircuitBreaker() {
 }
 
 ```
-Any changes in breaker state will be generate metrics for monitoring. Below is a list of the metrics.
+Any changes in breaker state will generate metrics for monitoring. Below is a list of the metrics.
 ```
 Name: "circuit_breaker_open"
 Help: "A total number of circuit breaker state open. This happens due to the circuit being measured as unhealthy."
