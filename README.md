@@ -7,16 +7,16 @@ Supports:
 
 - Redis 3 commands except QUIT, MONITOR, SLOWLOG and SYNC.
 - Automatic connection pooling with [circuit breaker](https://en.wikipedia.org/wiki/Circuit_breaker_design_pattern) support.
-- [Pub/Sub](https://godoc.org/github.com/bukalapak/redis#PubSub).
-- [Transactions](https://godoc.org/github.com/bukalapak/redis#Multi).
-- [Pipeline](https://godoc.org/github.com/bukalapak/redis#example-Client-Pipeline) and [TxPipeline](https://godoc.org/github.com/bukalapak/redis#example-Client-TxPipeline).
-- [Scripting](https://godoc.org/github.com/bukalapak/redis#Script).
-- [Timeouts](https://godoc.org/github.com/bukalapak/redis#Options).
-- [Redis Sentinel](https://godoc.org/github.com/bukalapak/redis#NewFailoverClient).
-- [Redis Cluster](https://godoc.org/github.com/bukalapak/redis#NewClusterClient).
-- [Cluster of Redis Servers](https://godoc.org/github.com/bukalapak/redis#example-NewClusterClient--ManualSetup) without using cluster mode and Redis Sentinel.
-- [Ring](https://godoc.org/github.com/bukalapak/redis#NewRing).
-- [Instrumentation](https://godoc.org/github.com/bukalapak/redis#ex-package--Instrumentation).
+- [Pub/Sub](https://godoc.org/github.com/bukalapak/go-redis#PubSub).
+- [Transactions](https://godoc.org/github.com/bukalapak/go-redis#Multi).
+- [Pipeline](https://godoc.org/github.com/bukalapak/go-redis#example-Client-Pipeline) and [TxPipeline](https://godoc.org/github.com/bukalapak/go-redis#example-Client-TxPipeline).
+- [Scripting](https://godoc.org/github.com/bukalapak/go-redis#Script).
+- [Timeouts](https://godoc.org/github.com/bukalapak/go-redis#Options).
+- [Redis Sentinel](https://godoc.org/github.com/bukalapak/go-redis#NewFailoverClient).
+- [Redis Cluster](https://godoc.org/github.com/bukalapak/go-redis#NewClusterClient).
+- [Cluster of Redis Servers](https://godoc.org/github.com/bukalapak/go-redis#example-NewClusterClient--ManualSetup) without using cluster mode and Redis Sentinel.
+- [Ring](https://godoc.org/github.com/bukalapak/go-redis#NewRing).
+- [Instrumentation](https://godoc.org/github.com/bukalapak/go-redis#ex-package--Instrumentation).
 - [Cache friendly](https://github.com/go-redis/cache).
 - [Rate limiting](https://github.com/go-redis/redis_rate).
 - [Distributed Locks](https://github.com/bsm/redis-lock).
@@ -27,13 +27,13 @@ Supports:
 Install:
 
 ```shell
-go get -u github.com/bukalapak/redis
+go get -u github.com/bukalapak/go-redis
 ```
 
 Import:
 
 ```go
-import "github.com/bukalapak/redis"
+import "github.com/bukalapak/go-redis"
 ```
 
 ## Quickstart
