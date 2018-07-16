@@ -203,15 +203,15 @@ func getStateError(err error) string {
 	if err != nil {
 		switch err {
 		case hystrix.ErrCircuitOpen:
-			fallthrough
+			return "circuit_open"
 		case hystrix.ErrMaxConcurrency:
-			fallthrough
+			return "max_concurrency"
 		case hystrix.ErrTimeout:
-			return err.Error()
+			return "timeout"
 		}
 	}
 
-	return ""
+	return err.Error()
 }
 
 func (c *baseClient) retryBackoff(attempt int) time.Duration {
