@@ -1,7 +1,7 @@
 package redis_test
 
 import (
-	"github.com/bukalapak/redis"
+	"github.com/bukalapak/go-redis"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

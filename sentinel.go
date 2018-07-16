@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bukalapak/redis/internal"
-	"github.com/bukalapak/redis/internal/pool"
+	"github.com/bukalapak/go-redis/internal"
+	"github.com/bukalapak/go-redis/internal/pool"
 )
 
 //------------------------------------------------------------------------------

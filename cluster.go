@@ -13,11 +13,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/bukalapak/redis/internal"
-	"github.com/bukalapak/redis/internal/hashtag"
-	"github.com/bukalapak/redis/internal/pool"
-	"github.com/bukalapak/redis/internal/proto"
-	"github.com/bukalapak/redis/internal/singleflight"
+	"github.com/bukalapak/go-redis/internal"
+	"github.com/bukalapak/go-redis/internal/hashtag"
+	"github.com/bukalapak/go-redis/internal/pool"
+	"github.com/bukalapak/go-redis/internal/proto"
+	"github.com/bukalapak/go-redis/internal/singleflight"
 )
 
 var errClusterNoNodes = fmt.Errorf("redis: cluster has no nodes")

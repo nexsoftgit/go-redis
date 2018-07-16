@@ -1,8 +1,8 @@
 package redis
 
 import (
-	"github.com/bukalapak/redis/internal/pool"
-	"github.com/bukalapak/redis/internal/proto"
+	"github.com/bukalapak/go-redis/internal/pool"
+	"github.com/bukalapak/go-redis/internal/proto"
 )
 
 // TxFailedErr transaction redis failed.

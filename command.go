@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bukalapak/redis/internal"
-	"github.com/bukalapak/redis/internal/pool"
-	"github.com/bukalapak/redis/internal/proto"
-	"github.com/bukalapak/redis/internal/util"
+	"github.com/bukalapak/go-redis/internal"
+	"github.com/bukalapak/go-redis/internal/pool"
+	"github.com/bukalapak/go-redis/internal/proto"
+	"github.com/bukalapak/go-redis/internal/util"
 )
 
 type Cmder interface {

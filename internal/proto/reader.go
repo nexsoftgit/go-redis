@@ -6,7 +6,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/bukalapak/redis/internal/util"
+	"github.com/bukalapak/go-redis/internal/util"
 )
 
 const bytesAllocLimit = 1024 * 1024 // 1mb

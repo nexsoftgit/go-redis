@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bukalapak/redis/internal/proto"
+	"github.com/bukalapak/go-redis/internal/proto"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
-	"github.com/bukalapak/redis"
+	"github.com/bukalapak/go-redis"
 
 	. "github.com/onsi/ginkgo"
 	mg "github.com/onsi/gomega"

@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
-	"github.com/bukalapak/redis/internal/pool"
+	"github.com/bukalapak/go-redis/internal/pool"
 )
 
 type Options struct {

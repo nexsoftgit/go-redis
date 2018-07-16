@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bukalapak/redis"
+	"github.com/bukalapak/go-redis"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

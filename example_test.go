@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bukalapak/redis"
+	"github.com/bukalapak/go-redis"
 )
 
 var client *redis.Client

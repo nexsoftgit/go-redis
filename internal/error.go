@@ -5,7 +5,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/bukalapak/redis/internal/proto"
+	"github.com/bukalapak/go-redis/internal/proto"
 )
 
 func IsRetryableError(err error, retryNetError bool) bool {

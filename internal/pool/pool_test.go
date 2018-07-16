@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bukalapak/redis/internal/pool"
+	"github.com/bukalapak/go-redis/internal/pool"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
