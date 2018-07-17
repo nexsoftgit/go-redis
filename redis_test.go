@@ -5,7 +5,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/afex/hystrix-go/hystrix"
+	"github.com/bukalapak/go-redis"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -366,4 +367,47 @@ var _ = Describe("Client OnConnect", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(name).To(Equal("on_connect"))
 	})
+})
+
+var _ = Describe("CircuitBreaker", func() {
+	var opt *redis.Options
+	var client *redis.Client
+
+	AfterEach(func() {
+		Expect(client.Close()).NotTo(HaveOccurred())
+	})
+
+	testTimeout := func() {
+		It("Open circuit breaker", func() {
+
+			//stop redis server
+			Expect(redisMain.Close()).NotTo(HaveOccurred())
+
+			// err because exceeded cb treshold (1)
+			err := client.Ping().Err()
+			Expect(err).To(HaveOccurred())
+
+			//start redis server
+			redisMain, err = startRedis(redisPort)
+			Expect(err).NotTo(HaveOccurred())
+
+			// Client ping must be failed because circuit breaker on state open
+			err = client.Ping().Err()
+			Expect(err).To(MatchError(hystrix.ErrCircuitOpen))
+		})
+
+	}
+
+	Context("circuit breaker", func() {
+		BeforeEach(func() {
+			opt = redisOptionsBreaker()
+			opt.CircuitBreaker.RequestVolumeThreshold = 1
+			opt.ReadTimeout = time.Nanosecond
+			opt.WriteTimeout = time.Nanosecond
+			client = redis.NewClient(opt)
+		})
+
+		testTimeout()
+	})
+
 })

@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis/internal"
-	"github.com/go-redis/redis/internal/pool"
+	"github.com/bukalapak/go-redis/internal"
+	"github.com/bukalapak/go-redis/internal/pool"
 )
 
 //------------------------------------------------------------------------------
@@ -77,8 +77,7 @@ func NewFailoverClient(failoverOpt *FailoverOptions) *Client {
 	failover := &sentinelFailover{
 		masterName:    failoverOpt.MasterName,
 		sentinelAddrs: failoverOpt.SentinelAddrs,
-
-		opt: opt,
+		opt:           opt,
 	}
 
 	c := Client{

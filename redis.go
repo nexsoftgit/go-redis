@@ -7,9 +7,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-redis/redis/internal"
-	"github.com/go-redis/redis/internal/pool"
-	"github.com/go-redis/redis/internal/proto"
+	"github.com/afex/hystrix-go/hystrix"
+	"github.com/bukalapak/go-redis/internal"
+	"github.com/bukalapak/go-redis/internal/pool"
+	"github.com/bukalapak/go-redis/internal/proto"
 )
 
 // Nil reply Redis returns when key does not exist.
@@ -35,7 +36,12 @@ type baseClient struct {
 }
 
 func (c *baseClient) init() {
-	c.process = c.defaultProcess
+	if c.opt.CircuitBreaker == nil {
+		c.process = c.defaultProcess
+	} else {
+		c.process = c.processWithBreaker
+	}
+
 	c.processPipeline = c.defaultProcessPipeline
 	c.processTxPipeline = c.defaultProcessTxPipeline
 }
@@ -167,6 +173,22 @@ func (c *baseClient) defaultProcess(cmd Cmder) error {
 		return err
 	}
 
+	return cmd.Err()
+}
+
+func (c *baseClient) processWithBreaker(cmd Cmder) error {
+	nameSetting := "redisClient"
+	cbCommands := hystrix.GetCircuitSettings()
+	if _, exists := cbCommands[nameSetting]; !exists {
+		hystrix.ConfigureCommand(nameSetting, *c.opt.CircuitBreaker)
+	}
+
+	err := hystrix.Do(nameSetting, func() error {
+		return c.defaultProcess(cmd)
+	}, nil)
+
+	generateMetric(cmd.String(), err)
+	cmd.setErr(err)
 	return cmd.Err()
 }
 

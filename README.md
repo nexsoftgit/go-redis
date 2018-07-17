@@ -1,87 +1,104 @@
 # Redis client for Golang
 
-[![Build Status](https://travis-ci.org/go-redis/redis.png?branch=master)](https://travis-ci.org/go-redis/redis)
-[![GoDoc](https://godoc.org/github.com/go-redis/redis?status.svg)](https://godoc.org/github.com/go-redis/redis)
-[![Airbrake](https://img.shields.io/badge/kudos-airbrake.io-orange.svg)](https://airbrake.io)
+
+
 
 Supports:
 
 - Redis 3 commands except QUIT, MONITOR, SLOWLOG and SYNC.
 - Automatic connection pooling with [circuit breaker](https://en.wikipedia.org/wiki/Circuit_breaker_design_pattern) support.
-- [Pub/Sub](https://godoc.org/github.com/go-redis/redis#PubSub).
-- [Transactions](https://godoc.org/github.com/go-redis/redis#Multi).
-- [Pipeline](https://godoc.org/github.com/go-redis/redis#example-Client-Pipeline) and [TxPipeline](https://godoc.org/github.com/go-redis/redis#example-Client-TxPipeline).
-- [Scripting](https://godoc.org/github.com/go-redis/redis#Script).
-- [Timeouts](https://godoc.org/github.com/go-redis/redis#Options).
-- [Redis Sentinel](https://godoc.org/github.com/go-redis/redis#NewFailoverClient).
-- [Redis Cluster](https://godoc.org/github.com/go-redis/redis#NewClusterClient).
-- [Cluster of Redis Servers](https://godoc.org/github.com/go-redis/redis#example-NewClusterClient--ManualSetup) without using cluster mode and Redis Sentinel.
-- [Ring](https://godoc.org/github.com/go-redis/redis#NewRing).
-- [Instrumentation](https://godoc.org/github.com/go-redis/redis#ex-package--Instrumentation).
+- [Pub/Sub](https://godoc.org/github.com/bukalapak/go-redis#PubSub).
+- [Transactions](https://godoc.org/github.com/bukalapak/go-redis#Multi).
+- [Pipeline](https://godoc.org/github.com/bukalapak/go-redis#example-Client-Pipeline) and [TxPipeline](https://godoc.org/github.com/bukalapak/go-redis#example-Client-TxPipeline).
+- [Scripting](https://godoc.org/github.com/bukalapak/go-redis#Script).
+- [Timeouts](https://godoc.org/github.com/bukalapak/go-redis#Options).
+- [Redis Sentinel](https://godoc.org/github.com/bukalapak/go-redis#NewFailoverClient).
+- [Redis Cluster](https://godoc.org/github.com/bukalapak/go-redis#NewClusterClient).
+- [Cluster of Redis Servers](https://godoc.org/github.com/bukalapak/go-redis#example-NewClusterClient--ManualSetup) without using cluster mode and Redis Sentinel.
+- [Ring](https://godoc.org/github.com/bukalapak/go-redis#NewRing).
+- [Instrumentation](https://godoc.org/github.com/bukalapak/go-redis#ex-package--Instrumentation).
 - [Cache friendly](https://github.com/go-redis/cache).
 - [Rate limiting](https://github.com/go-redis/redis_rate).
 - [Distributed Locks](https://github.com/bsm/redis-lock).
 
-API docs: https://godoc.org/github.com/go-redis/redis.
-Examples: https://godoc.org/github.com/go-redis/redis#pkg-examples.
 
 ## Installation
 
 Install:
 
 ```shell
-go get -u github.com/go-redis/redis
+go get -u github.com/bukalapak/go-redis
 ```
 
 Import:
 
 ```go
-import "github.com/go-redis/redis"
+import "github.com/bukalapak/go-redis"
 ```
 
 ## Quickstart
 
 ```go
 func ExampleNewClient() {
-	client := redis.NewClient(&redis.Options{
+	opts := &redis.Options{
+		CircuitBreaker: optCB,
 		Addr:     "localhost:6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
-	})
+	}
+
+	client := redis.NewClient(opts
+
+	pong, err := client.Ping().Result()
+	fmt.Println(pong, err)
+	// Output: PONG <nil>
+}
+```
+### With Circuit Breaker
+```go
+func WithCircuitBreaker() {
+	
+	optCB := &hystrix.CommandConfig{
+		Timeout:                10000,
+		RequestVolumeThreshold: 2,
+		SleepWindow:            500,
+		ErrorPercentThreshold:  5,
+	}
+	// Please, read more about command config in hystrix-go doc.
+	//https://godoc.org/github.com/afex/hystrix-go/hystrix#pkg-variables)
+
+	opts := &redis.Options{
+		CircuitBreaker: optCB,
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	}
+
+	client := redis.NewClient(opts)
 
 	pong, err := client.Ping().Result()
 	fmt.Println(pong, err)
 	// Output: PONG <nil>
 }
 
-func ExampleClient() {
-	err := client.Set("key", "value", 0).Err()
-	if err != nil {
-		panic(err)
-	}
-
-	val, err := client.Get("key").Result()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("key", val)
-
-	val2, err := client.Get("key2").Result()
-	if err == redis.Nil {
-		fmt.Println("key2 does not exist")
-	} else if err != nil {
-		panic(err)
-	} else {
-		fmt.Println("key2", val2)
-	}
-	// Output: key value
-	// key2 does not exist
-}
 ```
+Any changes in breaker state will generate metrics for monitoring. Below is a list of the metrics.
+``` yaml
+Name: "circuit_breaker"
+Help: "A total number of redis client make a request to redis server with circuit breaker state."
+Labels: 
+	- command : "redis command" 
+	- service : "service name"
+	- status : "fail/ok"
+	- state: 
+		- "circuit breaker open": A total number of circuit breaker state open. This happens due to the circuit being measured as unhealthy.
+		- "max_concurency": A total number of client executed at the same time and exceeded max concurrency.
+		- "timeout": A total number of request exceeded timeout duration
 
+```
 ## Howto
 
-Please go through [examples](https://godoc.org/github.com/go-redis/redis#pkg-examples) to get an idea how to use this package.
+Please go through [examples](example_test.go) to get an idea how to use this package.
 
 ## Look and feel
 

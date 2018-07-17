@@ -11,10 +11,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-redis/redis/internal/pool"
+	"github.com/afex/hystrix-go/hystrix"
+	"github.com/bukalapak/go-redis/internal/pool"
 )
 
 type Options struct {
+	// Compose hystrix config Circuit Breaker
+	CircuitBreaker *hystrix.CommandConfig
+
 	// The network type, either tcp or unix.
 	// Default is tcp.
 	Network string

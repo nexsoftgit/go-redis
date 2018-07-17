@@ -1,6 +1,7 @@
 package redis_test
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"net"
@@ -12,10 +13,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/afex/hystrix-go/hystrix"
+	"github.com/bukalapak/go-redis"
 
 	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	mg "github.com/onsi/gomega"
 )
 
 const (
@@ -31,7 +33,7 @@ const (
 )
 
 const (
-	sentinelName       = "mymaster"
+	sentinelName       = "mysyfu"
 	sentinelMasterPort = "8123"
 	sentinelSlave1Port = "8124"
 	sentinelSlave2Port = "8125"
@@ -55,51 +57,51 @@ var _ = BeforeSuite(func() {
 	var err error
 
 	redisMain, err = startRedis(redisPort)
-	Expect(err).NotTo(HaveOccurred())
+	mg.Expect(err).NotTo(mg.HaveOccurred())
 
 	ringShard1, err = startRedis(ringShard1Port)
-	Expect(err).NotTo(HaveOccurred())
+	mg.Expect(err).NotTo(mg.HaveOccurred())
 
 	ringShard2, err = startRedis(ringShard2Port)
-	Expect(err).NotTo(HaveOccurred())
+	mg.Expect(err).NotTo(mg.HaveOccurred())
 
 	ringShard3, err = startRedis(ringShard3Port)
-	Expect(err).NotTo(HaveOccurred())
+	mg.Expect(err).NotTo(mg.HaveOccurred())
 
 	sentinelMaster, err = startRedis(sentinelMasterPort)
-	Expect(err).NotTo(HaveOccurred())
+	mg.Expect(err).NotTo(mg.HaveOccurred())
 
 	sentinel, err = startSentinel(sentinelPort, sentinelName, sentinelMasterPort)
-	Expect(err).NotTo(HaveOccurred())
+	mg.Expect(err).NotTo(mg.HaveOccurred())
 
 	sentinelSlave1, err = startRedis(
 		sentinelSlave1Port, "--slaveof", "127.0.0.1", sentinelMasterPort)
-	Expect(err).NotTo(HaveOccurred())
+	mg.Expect(err).NotTo(mg.HaveOccurred())
 
 	sentinelSlave2, err = startRedis(
 		sentinelSlave2Port, "--slaveof", "127.0.0.1", sentinelMasterPort)
-	Expect(err).NotTo(HaveOccurred())
+	mg.Expect(err).NotTo(mg.HaveOccurred())
 
-	Expect(startCluster(cluster)).NotTo(HaveOccurred())
+	mg.Expect(startCluster(cluster)).NotTo(mg.HaveOccurred())
 })
 
 var _ = AfterSuite(func() {
-	Expect(redisMain.Close()).NotTo(HaveOccurred())
+	mg.Expect(redisMain.Close()).NotTo(mg.HaveOccurred())
 
-	Expect(ringShard1.Close()).NotTo(HaveOccurred())
-	Expect(ringShard2.Close()).NotTo(HaveOccurred())
-	Expect(ringShard3.Close()).NotTo(HaveOccurred())
+	mg.Expect(ringShard1.Close()).NotTo(mg.HaveOccurred())
+	mg.Expect(ringShard2.Close()).NotTo(mg.HaveOccurred())
+	mg.Expect(ringShard3.Close()).NotTo(mg.HaveOccurred())
 
-	Expect(sentinel.Close()).NotTo(HaveOccurred())
-	Expect(sentinelSlave1.Close()).NotTo(HaveOccurred())
-	Expect(sentinelSlave2.Close()).NotTo(HaveOccurred())
-	Expect(sentinelMaster.Close()).NotTo(HaveOccurred())
+	mg.Expect(sentinel.Close()).NotTo(mg.HaveOccurred())
+	mg.Expect(sentinelSlave1.Close()).NotTo(mg.HaveOccurred())
+	mg.Expect(sentinelSlave2.Close()).NotTo(mg.HaveOccurred())
+	mg.Expect(sentinelMaster.Close()).NotTo(mg.HaveOccurred())
 
-	Expect(stopCluster(cluster)).NotTo(HaveOccurred())
+	mg.Expect(stopCluster(cluster)).NotTo(mg.HaveOccurred())
 })
 
 func TestGinkgoSuite(t *testing.T) {
-	RegisterFailHandler(Fail)
+	mg.RegisterFailHandler(Fail)
 	RunSpecs(t, "go-redis")
 }
 
@@ -107,6 +109,26 @@ func TestGinkgoSuite(t *testing.T) {
 
 func redisOptions() *redis.Options {
 	return &redis.Options{
+		Addr:               redisAddr,
+		DB:                 15,
+		DialTimeout:        10 * time.Second,
+		ReadTimeout:        30 * time.Second,
+		WriteTimeout:       30 * time.Second,
+		PoolSize:           10,
+		PoolTimeout:        30 * time.Second,
+		IdleTimeout:        500 * time.Millisecond,
+		IdleCheckFrequency: 500 * time.Millisecond,
+	}
+}
+
+func redisOptionsBreaker() *redis.Options {
+	return &redis.Options{
+		CircuitBreaker: &hystrix.CommandConfig{
+			Timeout:                10000,
+			RequestVolumeThreshold: 2,
+			SleepWindow:            500,
+			ErrorPercentThreshold:  5,
+		},
 		Addr:               redisAddr,
 		DB:                 15,
 		DialTimeout:        10 * time.Second,
@@ -276,8 +298,12 @@ func startRedis(port string, args ...string) (*redisProcess, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err = exec.Command("cp", "-f", redisServerConf, dir).Run(); err != nil {
-		return nil, err
+
+	stdErr := &bytes.Buffer{}
+	cmdCp := exec.Command("cp", "-f", redisServerConf, dir)
+	cmdCp.Stderr = stdErr
+	if err = cmdCp.Run(); err != nil {
+		return nil, fmt.Errorf("cp redis config failed err: %s, stdErr %s", err, stdErr)
 	}
 
 	baseArgs := []string{filepath.Join(dir, "redis.conf"), "--port", port, "--dir", dir}
