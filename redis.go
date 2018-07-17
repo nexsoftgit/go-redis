@@ -26,7 +26,10 @@ func SetLogger(logger *log.Logger) {
 }
 
 type baseClient struct {
-	ctx      context.Context
+	//Use context to which carries deadlines, cancelation signals,
+	// and other request-scoped values across API boundaries between processes.
+	context context.Context
+
 	opt      *Options
 	connPool pool.Pooler
 
@@ -45,6 +48,7 @@ func (c *baseClient) init() {
 		c.process = c.processWithBreaker
 	}
 
+	c.context = context.Background()
 	c.processPipeline = c.defaultProcessPipeline
 	c.processTxPipeline = c.defaultProcessTxPipeline
 }
@@ -139,7 +143,7 @@ func (c *baseClient) WrapProcess(fn func(oldProcess func(cmd Cmder) error) func(
 
 func (c *baseClient) Process(cmd Cmder) error {
 	start := time.Now()
-	span, ctx := opentracing.StartSpanFromContext(context.Background(), "go_redis_client")
+	span, ctx := opentracing.StartSpanFromContext(c.context, "go_redis_client")
 	defer span.Finish()
 	span = span.SetTag("db.type", "redis")
 	span = span.SetTag("db.statment", cmd.String())
@@ -154,7 +158,7 @@ func (c *baseClient) Process(cmd Cmder) error {
 			"latency", time.Since(start),
 		)
 	}
-	c.ctx = ctx
+	c.context = ctx
 	return err
 }
 
@@ -381,8 +385,6 @@ func (c *baseClient) txPipelineReadQueued(cn *pool.Conn, cmds []Cmder) error {
 type Client struct {
 	baseClient
 	cmdable
-
-	ctx context.Context
 }
 
 // NewClient returns a client to the Redis Server specified by Options.
@@ -406,8 +408,9 @@ func (c *Client) init() {
 }
 
 func (c *Client) Context() context.Context {
-	if c.ctx != nil {
-		return c.ctx
+
+	if c.baseClient.context != nil {
+		return c.baseClient.context
 	}
 	return context.Background()
 }
@@ -417,7 +420,7 @@ func (c *Client) WithContext(ctx context.Context) *Client {
 		panic("nil context")
 	}
 	c2 := c.copy()
-	c2.ctx = ctx
+	c2.baseClient.context = ctx
 	return c2
 }
 
