@@ -369,7 +369,7 @@ var _ = Describe("Client OnConnect", func() {
 	})
 })
 
-var _ = FDescribe("CircuitBreaker", func() {
+var _ = Describe("CircuitBreaker", func() {
 	var opt *redis.Options
 	var client *redis.Client
 

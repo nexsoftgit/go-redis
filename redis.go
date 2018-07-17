@@ -207,30 +207,9 @@ func (c *baseClient) processWithBreaker(cmd Cmder) error {
 		return c.defaultProcess(cmd)
 	}, nil)
 
-	if err != nil {
-		circuitBreakerMetric.WithLabelValues(cmd.String(), "go_redis_client", "fail", getStateError(err)).Inc()
-	} else {
-		circuitBreakerMetric.WithLabelValues(cmd.String(), "go_redis_client", "ok", "").Inc()
-	}
-
+	generateMetric(cmd.String(), err)
 	cmd.setErr(err)
 	return cmd.Err()
-}
-
-func getStateError(err error) string {
-
-	if err != nil {
-		switch err {
-		case hystrix.ErrCircuitOpen:
-			fallthrough
-		case hystrix.ErrMaxConcurrency:
-			fallthrough
-		case hystrix.ErrTimeout:
-			return err.Error()
-		}
-	}
-
-	return ""
 }
 
 func (c *baseClient) retryBackoff(attempt int) time.Duration {
