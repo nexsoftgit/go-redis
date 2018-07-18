@@ -26,7 +26,7 @@ func SetLogger(logger *log.Logger) {
 }
 
 type baseClient struct {
-	//Use context to which carries deadlines, cancelation signals,
+	//Use context which carries deadlines, cancelation signals,
 	// and other request-scoped values across API boundaries between processes.
 	context context.Context
 
@@ -146,7 +146,7 @@ func (c *baseClient) Process(cmd Cmder) error {
 	span, ctx := opentracing.StartSpanFromContext(c.context, "go_redis_client")
 	defer span.Finish()
 	span = span.SetTag("db.type", "redis")
-	span = span.SetTag("db.statment", cmd.String())
+	span = span.SetTag("db.statement", cmd.String())
 	span = span.SetTag("span.kind", "client")
 
 	err := c.process(cmd)
@@ -154,7 +154,7 @@ func (c *baseClient) Process(cmd Cmder) error {
 		span.LogEvent("error")
 		span.LogKV(
 			"event", "error",
-			"type", err.Error(),
+			"message", err.Error(),
 			"latency", time.Since(start),
 		)
 	}
