@@ -155,7 +155,7 @@ func (c *baseClient) Process(cmd Cmder) error {
 		span.LogKV(
 			"event", "error",
 			"message", err.Error(),
-			"latency", time.Since(start),
+			"latency", time.Since(start).Seconds(),
 		)
 	}
 	c.context = ctx
