@@ -26,7 +26,7 @@ func SetLogger(logger *log.Logger) {
 }
 
 type baseClient struct {
-	//Use context which carries deadlines, cancelation signals,
+	//Use context which carries deadlines, cancellation signals,
 	// and other request-scoped values across API boundaries between processes.
 	context context.Context
 
