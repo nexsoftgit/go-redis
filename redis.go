@@ -11,6 +11,7 @@ import (
 	"github.com/bukalapak/go-redis/internal"
 	"github.com/bukalapak/go-redis/internal/pool"
 	"github.com/bukalapak/go-redis/internal/proto"
+	opentracing "github.com/opentracing/opentracing-go"
 )
 
 // Nil reply Redis returns when key does not exist.
@@ -25,6 +26,10 @@ func SetLogger(logger *log.Logger) {
 }
 
 type baseClient struct {
+	// Use context which carries deadlines, cancellation signals,
+	// and other request-scoped values across API boundaries between processes.
+	context context.Context
+
 	opt      *Options
 	connPool pool.Pooler
 
@@ -36,12 +41,14 @@ type baseClient struct {
 }
 
 func (c *baseClient) init() {
+
 	if c.opt.CircuitBreaker == nil {
 		c.process = c.defaultProcess
 	} else {
 		c.process = c.processWithBreaker
 	}
 
+	c.context = context.Background()
 	c.processPipeline = c.defaultProcessPipeline
 	c.processTxPipeline = c.defaultProcessTxPipeline
 }
@@ -135,7 +142,25 @@ func (c *baseClient) WrapProcess(fn func(oldProcess func(cmd Cmder) error) func(
 }
 
 func (c *baseClient) Process(cmd Cmder) error {
-	return c.process(cmd)
+	start := time.Now()
+	span, ctx := opentracing.StartSpanFromContext(c.context, "go_redis_client")
+	defer span.Finish()
+
+	span = span.SetTag("db.type", "redis")
+	span = span.SetTag("db.statement", cmd.String())
+	span = span.SetTag("span.kind", "client")
+
+	err := c.process(cmd)
+	if err != nil {
+		span.LogEvent("error")
+		span.LogKV(
+			"event", "error",
+			"message", err.Error(),
+			"latency", time.Since(start).Seconds(),
+		)
+	}
+	c.context = ctx
+	return err
 }
 
 func (c *baseClient) defaultProcess(cmd Cmder) error {
@@ -361,8 +386,6 @@ func (c *baseClient) txPipelineReadQueued(cn *pool.Conn, cmds []Cmder) error {
 type Client struct {
 	baseClient
 	cmdable
-
-	ctx context.Context
 }
 
 // NewClient returns a client to the Redis Server specified by Options.
@@ -386,8 +409,9 @@ func (c *Client) init() {
 }
 
 func (c *Client) Context() context.Context {
-	if c.ctx != nil {
-		return c.ctx
+
+	if c.baseClient.context != nil {
+		return c.baseClient.context
 	}
 	return context.Background()
 }
@@ -397,7 +421,7 @@ func (c *Client) WithContext(ctx context.Context) *Client {
 		panic("nil context")
 	}
 	c2 := c.copy()
-	c2.ctx = ctx
+	c2.baseClient.context = ctx
 	return c2
 }
 

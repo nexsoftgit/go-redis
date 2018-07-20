@@ -47,7 +47,7 @@ func ExampleNewClient() {
 		DB:       0,  // use default DB
 	}
 
-	client := redis.NewClient(opts
+	client := redis.NewClient(opts)
 
 	pong, err := client.Ping().Result()
 	fmt.Println(pong, err)
