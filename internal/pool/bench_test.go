@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bukalapak/go-redis/internal/pool"
+	"github.com/nexsoft-git/go-redis/internal/pool"
 )
 
 func benchmarkPoolGetPut(b *testing.B, poolSize int) {

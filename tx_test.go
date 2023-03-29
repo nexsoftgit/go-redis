@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/bukalapak/go-redis"
+	"github.com/nexsoft-git/go-redis"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

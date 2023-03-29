@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bukalapak/go-redis/internal"
-	"github.com/bukalapak/go-redis/internal/pool"
+	"github.com/nexsoft-git/go-redis/internal"
+	"github.com/nexsoft-git/go-redis/internal/pool"
 )
 
 //------------------------------------------------------------------------------

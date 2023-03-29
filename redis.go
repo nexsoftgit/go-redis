@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/afex/hystrix-go/hystrix"
-	"github.com/bukalapak/go-redis/internal"
-	"github.com/bukalapak/go-redis/internal/pool"
-	"github.com/bukalapak/go-redis/internal/proto"
+	"github.com/nexsoft-git/go-redis/internal"
+	"github.com/nexsoft-git/go-redis/internal/pool"
+	"github.com/nexsoft-git/go-redis/internal/proto"
 	opentracing "github.com/opentracing/opentracing-go"
 )
 

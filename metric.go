@@ -19,8 +19,9 @@ func init() {
 }
 
 func generateMetric(command string, err error) {
+	
 	if err != nil {
-		circuitBreakerMetric.WithLabelValues(command, "go_redis_client", "ok", "").Inc()
+		// circuitBreakerMetric.WithLabelValues(command, "go_redis_client", "ok", "").Inc()
 		return
 	}
 

@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bukalapak/go-redis/internal"
-	"github.com/bukalapak/go-redis/internal/pool"
-	"github.com/bukalapak/go-redis/internal/proto"
-	"github.com/bukalapak/go-redis/internal/util"
+	"github.com/nexsoft-git/go-redis/internal"
+	"github.com/nexsoft-git/go-redis/internal/pool"
+	"github.com/nexsoft-git/go-redis/internal/proto"
+	"github.com/nexsoft-git/go-redis/internal/util"
 )
 
 type Cmder interface {
