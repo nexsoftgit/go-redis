@@ -1,6 +1,6 @@
 package internal
 
-import "github.com/nexsoft-git/go-redis/internal/util"
+import "github.com/nexsoftgit/go-redis/internal/util"
 
 func ToLower(s string) string {
 	if isLower(s) {

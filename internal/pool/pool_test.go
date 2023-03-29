@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexsoft-git/go-redis/internal/pool"
+	"github.com/nexsoftgit/go-redis/internal/pool"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

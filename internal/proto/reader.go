@@ -6,7 +6,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/nexsoft-git/go-redis/internal/util"
+	"github.com/nexsoftgit/go-redis/internal/util"
 )
 
 const bytesAllocLimit = 1024 * 1024 // 1mb

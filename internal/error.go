@@ -5,7 +5,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/nexsoft-git/go-redis/internal/proto"
+	"github.com/nexsoftgit/go-redis/internal/proto"
 )
 
 func IsRetryableError(err error, retryNetError bool) bool {

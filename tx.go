@@ -1,8 +1,8 @@
 package redis
 
 import (
-	"github.com/nexsoft-git/go-redis/internal/pool"
-	"github.com/nexsoft-git/go-redis/internal/proto"
+	"github.com/nexsoftgit/go-redis/internal/pool"
+	"github.com/nexsoftgit/go-redis/internal/proto"
 )
 
 // TxFailedErr transaction redis failed.

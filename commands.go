@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/nexsoft-git/go-redis/internal"
+	"github.com/nexsoftgit/go-redis/internal"
 )
 
 func readTimeout(timeout time.Duration) time.Duration {

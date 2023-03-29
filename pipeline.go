@@ -3,7 +3,7 @@ package redis
 import (
 	"sync"
 
-	"github.com/nexsoft-git/go-redis/internal/pool"
+	"github.com/nexsoftgit/go-redis/internal/pool"
 )
 
 type pipelineExecer func([]Cmder) error

@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nexsoft-git/go-redis"
-	"github.com/nexsoft-git/go-redis/internal/hashtag"
+	"github.com/nexsoftgit/go-redis"
+	"github.com/nexsoftgit/go-redis/internal/hashtag"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

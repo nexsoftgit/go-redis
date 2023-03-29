@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/nexsoft-git/go-redis/internal/proto"
+	"github.com/nexsoftgit/go-redis/internal/proto"
 )
 
 // Implements proto.MultiBulkParse

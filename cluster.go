@@ -13,11 +13,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/nexsoft-git/go-redis/internal"
-	"github.com/nexsoft-git/go-redis/internal/hashtag"
-	"github.com/nexsoft-git/go-redis/internal/pool"
-	"github.com/nexsoft-git/go-redis/internal/proto"
-	"github.com/nexsoft-git/go-redis/internal/singleflight"
+	"github.com/nexsoftgit/go-redis/internal"
+	"github.com/nexsoftgit/go-redis/internal/hashtag"
+	"github.com/nexsoftgit/go-redis/internal/pool"
+	"github.com/nexsoftgit/go-redis/internal/proto"
+	"github.com/nexsoftgit/go-redis/internal/singleflight"
 )
 
 var errClusterNoNodes = fmt.Errorf("redis: cluster has no nodes")

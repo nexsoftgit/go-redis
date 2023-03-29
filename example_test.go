@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nexsoft-git/go-redis"
+	"github.com/nexsoftgit/go-redis"
 )
 
 var client *redis.Client

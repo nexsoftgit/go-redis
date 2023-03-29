@@ -1,4 +1,4 @@
-module github.com/nexsoft-git/go-redis
+module github.com/nexsoftgit/go-redis
 
 go 1.17
 
